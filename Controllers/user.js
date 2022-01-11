@@ -101,3 +101,21 @@ exports.modifyCartItems = (req, res) => {
     })
 
 }
+
+exports.addAddress = (req, res) => {
+    User.findById(req.profile._id, (err, user) => {
+        if (err) {
+            return res.status(400).json({
+                error: err
+            })
+        }
+        User.findByIdAndUpdate(user._id, { addresses: user.addresses.push(req.body.address) }, { new: true }, (err, user) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+            return res.status(200).json(user);
+        })
+    })
+}

@@ -50,7 +50,7 @@ exports.getProducts = (req, res) => {
                     "name": 1,
                     "description": 1,
                     "price": 1,
-                    "images": 1,
+                    "image": 1,
                     "postedUser": 1
                 }
             }

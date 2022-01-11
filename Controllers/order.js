@@ -1,4 +1,5 @@
 const Order = require('../Models/Order');
+const User = require('../Models/User');
 
 exports.getOrderById = (req, res, next, id) => {
     Order.findById(id, (err, order) => {
@@ -20,34 +21,30 @@ exports.placeOrder = (req, res) => {
                 error: err
             })
         }
+        User.findByIdAndUpdate(req.profile._id, { cartItems: [] }, { new: true }, (err, user) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+        })
         return res.status(200).json(order);
     })
 }
 
-exports.getOrder = (req, res) => {
-    Order.findById(req.order._id, (err, order) => {
+exports.getOrders = (req, res) => {
+    Order.find({ owner: req.profile._id }, (err, orders) => {
         if (err) {
             return res.status(400).json({
                 error: err
             })
         }
-        return res.status(200).json(order);
+        return res.status(200).json(orders);
     })
 }
 
 exports.cancelOrder = (req, res) => {
-    Order.findByIdAndUpdate(req.order._id, { status: 'Cancelled' }, { new: true }).exec((err, order) => {
-        if (err) {
-            return res.status(400).json({
-                error: err
-            })
-        }
-        return res.status(200).json(order);
-    })
-}
-
-exports.deliverOrder = (req, res) => {
-    Order.findByIdAndUpdate(req.order._id, { status: 'Delivered' }, { new: true }).exec((err, order) => {
+    Order.findByIdAndDelete(req.order._id).exec((err, order) => {
         if (err) {
             return res.status(400).json({
                 error: err
